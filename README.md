@@ -1,6 +1,6 @@
 # Mapping biotic disturbances using commercial imagery from the NASA CSDA Program: Code repository
 
-![Project institutions - banner](docs\ProjectInstitutionsBanner.png)  
+![Project institutions - banner](docs/ProjectInstitutionsBanner.png)  
 
 * This GitHub repository contains necessary code and materials for the NASA CSDA project titled:
     + *"Using commercial satellite imagery to study insect outbreaks in the US: Outbreak characteristics and evaluation of Landsat-based algorithms"*.
