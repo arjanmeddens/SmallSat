@@ -2,17 +2,18 @@
 
 ![Project institutions - banner](docs/ProjectInstitutionsBanner.png)  
 
-* This GitHub repository contains necessary code and materials for the NASA CSDA project titled:
-    + *"Using commercial satellite imagery to study insect outbreaks in the US: Outbreak characteristics and evaluation of Landsat-based algorithms"*.
+* This GitHub repository contains necessary code and materials for the [NASA CSDA](https://www.earthdata.nasa.gov/esds/csda) project titled: *Using commercial satellite imagery to study insect outbreaks in the US: Outbreak characteristics and evaluation of Landsat-based algorithms*.
 * The code available in the repository is to be applied to a example data of the study site (also included in the repository). 
 * Please refer to the manuscript for details about the project [URL FOR MANUSCRIPT]  
 
-The repository contains the following directories:
+<hr>
+
+### The repository contains the following directories:
 * The [`scripts`](scripts) directory contains R and python scripts in numbered sub-directories that outline the methodology of this project.
 * The [`docs`](docs) directory contains housekeeping documents and figures used for the construction and maintainance of this repository.
 
 ----------------------------------------------------------
-### Principle Investigator
+### Principal Investigator
 
 [Dr. Arjan Meddens](https://environment.wsu.edu/arjan-meddens/)  
 School of the Environment  
