@@ -1,3 +1,23 @@
+# Image files 
+*.jpg
+*.png
+*.jpeg
+*.tif*
+*.JPEG
+**/*.jpg
+*.xml
+*.qmd
+
+# point cloud files
+*.las
+*.bin
+*.laz
+
+# HTML outputs
+*.html
+*.HTML
+
+
 # History files
 .Rhistory
 .Rapp.history
@@ -14,6 +34,7 @@
 
 # Output files from R CMD build
 /*.tar.gz
+*.zip
 
 # Output files from R CMD check
 /*.Rcheck/
@@ -40,10 +61,24 @@ vignettes/*.pdf
 .Renviron
 
 # pkgdown site
-# docs/
+docs/
 
 # translation temp files
 po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Shapefiles #
+##############
+*.dbf
+*.fix
+*.prj
+*.qix
+*.shp
+*.shx
+*.sbx
+*.tfw
+*.cpg
+*.sbn
+*.shp*

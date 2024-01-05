@@ -15,6 +15,27 @@ rm(list = ls()); gc()
 ptm <- Sys.time()
 message(paste(Sys.time()))
 
+#--- Set up directory structure -------
+dir = getwd()
+
+dataPATH = file.path(dir, "DATA") #- input data path
+exportsPATH = file.path(dir, "EXPORTS") #- output data path
+
+# note: use of `file.path()` because it creates folder paths for:
+# - windows-based systems with "\" 
+# - unix (Mac) or linux-based systems with "/"  
+
+# Input paths (ensure files are in DATA folder)
+shp_dir = dataPATH
+img_dir = dataPATH
+img_cloud_dir = dataPATH
+
+# Output paths
+fig_dir = exportsPATH 
+outdir  = exportsPATH
+
+
+
 #------------------------------------------------------------------------
 # Load packages & Functions
 #------------------------------------------------------------------------
@@ -22,7 +43,7 @@ library(pacman)             #- To use p_load for faster package loading
 p_load(raster,GMCM,rgl,rgdal,randomForest,rfUtilities,maptools,sp,spatial,RColorBrewer,
        ggplot2,caret,e1071,RStoolbox,plotrix,mapaccuracy,doParallel,graph4lg,utils,kernlab)
 registerDoParallel(cores=1)
-source("D:/workspace/R/R_functions/calc_wv_index.r")
+source("calc_wv_index.r") # make sure this is in working dir
 get_value <- function(mykey, mylookupvector){
   myvalue <- mylookupvector[mykey]
   myvalue <- unname(myvalue)
@@ -34,19 +55,12 @@ get_value <- function(mykey, mylookupvector){
 plot = 1                  # Flag to plot imagery etc. 0:no/1:yes
 flag_varsel = 1           # Flag to run variable selection
 check_maj = 0             # Flag to run majority filter (turned off for now)
-run.list = c(1:24)        # Enter list to be run, taken from input parameter file:
+run.list = c(1:1)        # Enter list to be run, taken from input parameter file:
                           #  "smallsat_run_params_231022.csv", Enter "c(1:1)" for running single images     
 message(paste("Entered argument:....",run.list[1]))
 
-#--- Set up directory structure -------
-fig_dir = c("E:/OneDrive - Washington State University (email.wsu.edu)/MeddensLab/3_NASA_SmallSat/7_DATA/4_output/") 
-outdir  = c("E:/OneDrive - Washington State University (email.wsu.edu)/MeddensLab/3_NASA_SmallSat/7_DATA/4_output/")
-shp_dir = c("E:/OneDrive - Washington State University (email.wsu.edu)/MeddensLab/3_NASA_SmallSat/7_DATA/2_shapefiles/")
-img_dir = c("E:/OneDrive - Washington State University (email.wsu.edu)/MeddensLab/3_NASA_SmallSat/7_DATA/3_highres_images/")
-img_cloud_dir = c("E:/OneDrive - Washington State University (email.wsu.edu)/MeddensLab/3_NASA_SmallSat/7_DATA/13_cloud_mask/cloud_img/")
-
 #--- Read input param file ------------ 
-input_arr = suppressWarnings(read.csv(paste(shp_dir,"smallsat_run_params_231022.csv",sep='')))
+input_arr = suppressWarnings(read.csv(file.path(shp_dir,"smallsat_run_params_231221.csv")))
 img_no_arr        = input_arr[,1]
 img_id_arr        = input_arr[,2]
 shp_id_arr        = input_arr[,3]   # Example: 'GE01_20210824_M1BS_105001002694C800_eval6_UTM_p50.shp' 
@@ -88,7 +102,7 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   #---------------------------------------------------------------------------------------------  
   #- Load Eval/Training shape file, imagery, and calculate indices
   #---------------------------------------------------------------------------------------------
-  shp = shapefile(paste(shp_dir,shp_id, sep=''))
+  shp = raster::shapefile(file.path(shp_dir,shp_id))
   names(shp)[2]  = c("class")
   levels.class = levels(as.factor(shp$class))
   if (length(which(shp$class == "yt")) > 1){
@@ -99,13 +113,13 @@ for (x in 1:length(run.list)) { # here we input with the Args()
     paste("No grey tree class, number of classes:",n.class)
   }
   #- Load image with indices or create indices if image w/indices does not exist
-  file.name = (paste(img_dir,img_id,"_index.tif",sep=''))
+  file.name = (file.path(img_dir,paste(img_id,"_index.tif",sep='')))
   if (file.exists(file.name)==1) {
     message(paste("File with Indices exists...skipping:",file.name)) 
     img = raster::brick(paste(file.name,sep=''))
   } else {
     message(paste("File with Indices does not exists...creating:",file.name)) 
-    tmp_img = brick(paste(img_dir,img_id,".tif",sep=''))
+    tmp_img = raster::brick(file.path(img_dir, paste(img_id,".tif",sep='')))
     #-- Calculate indices
     num_bands = length(names(tmp_img))
     img2 = calc_wv_index(tmp_img,num_bands=num_bands)

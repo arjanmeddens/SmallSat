@@ -79,7 +79,7 @@ calc_wv_index = function(wv_data,num_bands=num_bands) {
      message(paste(list_return,'...'))
      message(paste('Processing time:'))
      message(paste(Sys.time() - ptm))
-     return(brick(list(BLU=BLU,GRE=GRE,RED=RED,NR1=NR1,NDVI1=NDVI1,EVI=EVI,RGI=RGI)))
+     return(raster::brick(list(BLU=BLU,GRE=GRE,RED=RED,NR1=NR1,NDVI1=NDVI1,EVI=EVI,RGI=RGI)))
   }
 }
 
