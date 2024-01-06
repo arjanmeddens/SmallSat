@@ -123,7 +123,8 @@ for (x in 1:length(run.list)) { # here we input with the Args()
     #-- Calculate indices
     num_bands = length(names(tmp_img))
     img2 = calc_wv_index(tmp_img,num_bands=num_bands)
-    img = brick(img2)
+    img = img2
+    # img = raster::brick(img2) # WHY brick twice?
     raster::writeRaster(img, filename=paste(file.name),overwrite=TRUE)
   }
 
@@ -145,7 +146,7 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   # Select extent
   #---------------------------------------------------------------------------------------------
   if (ext_shp_file != "") {
-    shp_ext_id = paste(shp_dir,ext_shp_file,sep='')
+    shp_ext_id = file.path(shp_dir,paste(ext_shp_file,sep=''))
     ext_shp = extent(shapefile(shp_ext_id))
   } else {
     ext_shp = extent(img)  # Running entire extent of input image
