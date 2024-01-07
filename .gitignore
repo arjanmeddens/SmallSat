@@ -1,10 +1,11 @@
 # Image files 
-*.jpg
-*.png
-*.jpeg
+# *.jpg
+# *.png
+# *.jpeg
 *.tif*
-*.JPEG
-**/*.jpg
+*.tif
+# *.JPEG
+# **/*.jpg
 *.xml
 *.qmd
 
