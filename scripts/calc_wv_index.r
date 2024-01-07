@@ -5,6 +5,7 @@
 # Meddens - WSU/UIdaho - 8 Feb 2018 
 #-------------------------------------------------------------------#
 # Updated to include 4 band 2021 NAIP images -- 19 May 2022
+# Updated to include 5 band MX RedEdge Sensor (UAS) -- 06 Jan 2023
 #-------------------------------------------------------------------#
 calc_wv_index = function(wv_data,num_bands=num_bands) {
   if (class(wv_data) == "RasterBrick") {
@@ -81,6 +82,39 @@ calc_wv_index = function(wv_data,num_bands=num_bands) {
      message(paste(Sys.time() - ptm))
      return(raster::brick(list(BLU=BLU,GRE=GRE,RED=RED,NR1=NR1,NDVI1=NDVI1,EVI=EVI,RGI=RGI)))
   }
+
+  #-- For 5 Band RedEdge MX (UAV MS sensor) DATA --#
+  if (num_bands == 5) {
+
+    img = wv_data
+    tmp_img <- (img/10000) 
+    
+    ptm <- Sys.time()
+    list_return = c('BLU','GRE','RED', 'REDEDGE', 'NIR', 'NDVI', 'NDRE', 'SR', 'GLI', 'RGI') # bands 
+    BLU     =  tmp_img[[1]]
+    GRE     =  tmp_img[[2]]
+    RED     =  tmp_img[[3]]
+    REDEDGE =  tmp_img[[4]]
+    NIR     =  tmp_img[[5]]
+    NDVI    = (tmp_img[[5]]-tmp_img[[3]]) / (tmp_img[[5]]+tmp_img[[3]]) 
+    NDRE    = (tmp_img[[5]]-tmp_img[[4]]) / (tmp_img[[5]]+tmp_img[[4]]) 
+    SR      = (tmp_img[[5]]/tmp_img[[3]])
+    GLI     = ((tmp_img[[2]]-tmp_img[[3]]) + (tmp_img[[2]]-tmp_img[[1]])) / ((2*tmp_img[[2]])+tmp_img[[3]]+tmp_img[[1]])   
+    RGI     = (tmp_img[[3]]/tmp_img[[2]])
+    message(paste('Calculated:'))
+    message(paste(list_return,'...'))
+    message(paste('Processing time:'))
+    message(paste(Sys.time() - ptm))
+    if (class(tmp_img) == "RasterBrick") {
+      return(raster::brick(list(BLU=BLU,GRE=GRE,RED=RED,REDEDGE=REDEDGE,NIR=NIR, NDVI=NDVI, NDRE=NDRE, SR=SR, GLI=GLI, RGI=RGI)))
+    } else {
+      return(raster::brick(list(BLU=BLU,GRE=GRE,RED=RED,REDEDGE=REDEDGE,NIR=NIR, NDVI=NDVI, NDRE=NDRE, SR=SR, GLI=GLI, RGI=RGI)))
+    }
+  }
+
+
+
+
 }
 
 #### END ####

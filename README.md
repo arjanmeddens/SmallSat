@@ -1,9 +1,7 @@
-# Mapping biotic disturbances using commercial imagery from the NASA CSDA Program: Code repository
+# Mapping biotic disturbances using very high-resolution satellite imagery: Code repository
 
-![Project institutions - banner](docs/ProjectInstitutionsBanner.png)  
-
-* This GitHub repository contains necessary code and materials for the [NASA CSDA](https://www.earthdata.nasa.gov/esds/csda) project titled: *Using commercial satellite imagery to study insect outbreaks in the US: Outbreak characteristics and evaluation of Landsat-based algorithms*.
-* The code available in the repository is to be applied to a example data of the study site (also included in the repository). 
+* This GitHub repository contains necessary code and materials for the [NASA CSDA](https://www.earthdata.nasa.gov/esds/csda) project titled: **Using commercial satellite imagery to study insect outbreaks in the US: Outbreak characteristics and evaluation of Landsat-based algorithms**.
+* The code available in the repository is to be applied to a subset data of the study site (also included in the repository). 
 * Please refer to the manuscript for details about the project [URL FOR MANUSCRIPT]  
 
 <hr>
@@ -23,3 +21,7 @@ Washington State University, Pullman, WA
 Contact information: 
 * arjan.meddens@wsu.edu
 * [Lab website](https://labs.wsu.edu/meddenslab/)
+
+<br>
+
+![Project institutions - banner](docs/ProjectInstitutionsBanner.png)  

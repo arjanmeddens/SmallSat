@@ -125,7 +125,7 @@ for (x in 1:length(run.list)) { # here we input with the Args()
     img2 = calc_wv_index(tmp_img,num_bands=num_bands)
     img = img2
     # img = raster::brick(img2) # WHY brick twice?
-    raster::writeRaster(img, filename=paste(file.name),overwrite=TRUE)
+    raster::writeRaster(img, filename=file.name,overwrite=TRUE)
   }
 
   # Setting the number of spectral bands to plot 
@@ -146,10 +146,10 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   # Select extent
   #---------------------------------------------------------------------------------------------
   if (ext_shp_file != "") {
-    shp_ext_id = file.path(shp_dir,paste(ext_shp_file,sep=''))
-    ext_shp = extent(shapefile(shp_ext_id))
+    shp_ext_id = file.path(shp_dir,ext_shp_file)
+    ext_shp = raster::extent(shapefile(shp_ext_id))
   } else {
-    ext_shp = extent(img)  # Running entire extent of input image
+    ext_shp = raster::extent(img)  # Running entire extent of input image
   }
 
   #---------------------------------------------------------------------------------------------
@@ -252,18 +252,18 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   eval.arr$Class  <- factor(eval.arr$Class)
 
   which(is.na(factor(train.arr$Class))==TRUE)
-  rf.classifier = randomForest(factor(train.arr$Class) ~ ., type = classification,
-                             data = train.arr, 
-                             ntree = 500, 
-                             importance = TRUE,na.action=na.exclude)
+  rf.classifier = randomForest::randomForest(factor(train.arr$Class) ~ ., type = classification,
+                                              data = train.arr, 
+                                              ntree = 500, 
+                                              importance = TRUE,na.action=na.exclude)
   print(rf.classifier)
-  pred.arr = predict(rf.classifier,eval.arr) 
+  pred.arr = randomForest::predict(rf.classifier,eval.arr) 
   table(Observed=eval.arr[,n.bands+1],Predicted=pred.arr)
   class_txt_arr = c("Healthy trees","Red trees","Herbaceous","Bare ground","Shadow","Gray trees")
   class_txt_arr
   accuracy(eval.arr[,n.bands+1],pred.arr)
   #index_list_arr = names(sort(importance(rf.classifier)[,6],decreasing = T))
-  index_list_arr = rownames(importance(rf.classifier))
+  index_list_arr = rownames(randomForest::importance(rf.classifier))
 
   #------------------------------------------------------------------
   # Inset "break" for testing the variable selection
@@ -282,7 +282,7 @@ for (x in 1:length(run.list)) { # here we input with the Args()
     #bootstrapp the rf.modelSel
     for (i in 1:iterations){
       seed_n<-sample(1:1000, 1, replace=FALSE)  
-      fit_msel<-rf.modelSel(train.arr[1:n.bands],train.arr$Class, imp.scale = "mir",
+      fit_msel<- rfUtilities::rf.modelSel(train.arr[1:n.bands],train.arr$Class, imp.scale = "mir",
                             final.model = FALSE, seed = seed_n, ntree=1000, parsimony=0.03)
       varimp<-fit_msel$imp
       vardat<-varimp[,1]
@@ -344,24 +344,24 @@ for (x in 1:length(run.list)) { # here we input with the Args()
     tmp_img = crop(tmp_img,ext_shp) # .... Note all training data needs to be in shp_ext!!!
   }
 
-  SC.mlhc       <- superClass(tmp_img, trainData = trainData, responseCol = "class", 
+  SC.mlhc       <- RStoolbox::superClass(tmp_img, trainData = trainData, responseCol = "class", 
                        model = "mlc", verbose=1)
-  val.mlhc  <- validateMap(SC.mlhc$map, valData = evalData, responseCol = "class", 
+  val.mlhc  <- RStoolbox::validateMap(SC.mlhc$map, valData = evalData, responseCol = "class", 
                        classMapping = SC.mlhc$classMapping)
-  SC.rf       <- superClass(tmp_img, trainData = trainData, responseCol = "class", 
+  SC.rf       <- RStoolbox::superClass(tmp_img, trainData = trainData, responseCol = "class", 
                        model = "rf", verbose=1)
-  val.rf  <- validateMap(SC.rf$map, valData = evalData, responseCol = "class", 
+  val.rf  <- RStoolbox::validateMap(SC.rf$map, valData = evalData, responseCol = "class", 
                          classMapping = SC.rf$classMapping)
 
   #https://urldefense.com/v3/__https://rpubs.com/uky994/593668__;!!JYXjzlvb!hOLHnMhmrMM9FiGDneDIoKNWZSgAdlCDbAFaml3Ql0HdLPd4ooC8gHNGqWrubAdfPL4IR6bNULMH9K6525NzkgkZ8XCNWqcFWcA$ 
   #https://urldefense.com/v3/__https://stats.stackexchange.com/questions/73032/linear-kernel-and-non-linear-kernel-for-support-vector-machine__;!!JYXjzlvb!hOLHnMhmrMM9FiGDneDIoKNWZSgAdlCDbAFaml3Ql0HdLPd4ooC8gHNGqWrubAdfPL4IR6bNULMH9K6525NzkgkZ8XCNYZ3319g$  
   #https://urldefense.com/v3/__https://blog.revolutionanalytics.com/2015/10/the-5th-tribe-support-vector-machines-and-caret.html__;!!JYXjzlvb!hOLHnMhmrMM9FiGDneDIoKNWZSgAdlCDbAFaml3Ql0HdLPd4ooC8gHNGqWrubAdfPL4IR6bNULMH9K6525NzkgkZ8XCN2e6UvA8$  
-  SC.svm <- superClass(tmp_img, trainData = trainData, responseCol = "class", 
+  SC.svm <- RStoolbox::RStoolbox::superClass(tmp_img, trainData = trainData, responseCol = "class", 
                      model = "svmRadial",            # linear kernel
                      tuneGrid = expand.grid(sigma = c(.01, .015, 0.2),
                      C = seq(0.1, 1.5, length = 15)),	
                      preProc = c("center","scale"))  # Center and scale data
-  val.svm  <- validateMap(SC.svm$map, valData = evalData, responseCol = "class", 
+  val.svm  <- RStoolbox::validateMap(SC.svm$map, valData = evalData, responseCol = "class", 
                         classMapping = SC.svm$classMapping)
 
   #------------------------------------------------------------------------
@@ -370,19 +370,19 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   file.name = (paste(img_cloud_dir,cloud_mask_file,sep=''))
   if (file.exists(file.name)==1) {
     message(paste("Cloud images exists...opening:",file.name)) 
-    cloud_img = raster(paste(file.name,sep=''))
+    cloud_img = raster::raster(paste(file.name,sep=''))
 
     if (ext_shp_file != "") {   # Crop Cloud img to same extent!!!
-      cloud_img = crop(cloud_img,ext_shp)
+      cloud_img = raster::crop(cloud_img,ext_shp)
     }  # Cloud shadow
     index_mask1 = cloud_img < 0.5   # Water/cloud shadow
     index_mask2 = cloud_img < 0.5   # Water/cloud shadow
   } else {
     # Cloud shadow
-    img_crop = crop(img[[3]],ext_shp)
+    img_crop = raster::crop(img[[3]],ext_shp)
     index_mask1 = img_crop > cld_shadow_trhd   # Water/cloud shadow
     # Clouds/bright objects
-    img_crop = crop(img[[2]],ext_shp)
+    img_crop = raster::crop(img[[2]],ext_shp)
     index_mask2 = img_crop < cld_trhd          # Clouds   
   }
 
@@ -390,7 +390,7 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   #- ADD IN IF FNF!!! - See older code how to create fnf mask
   #########################################################################
   if (file.exists(fnf_mask_file)==1) {
-    img_crop = crop(fnf_mask,ext_shp)
+    img_crop = raster::crop(fnf_mask,ext_shp)
     index_mask3 = img_crop < 3   # FNF radar mask --> 3:Non-for// 4:water
     mask_all = index_mask1 * index_mask2 * index_mask3 #Including FNF mask
   } else {
@@ -444,19 +444,19 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   #https://urldefense.com/v3/__http://www.cookbook-r.com/Data_input_and_output/Writing_text_and_output_from_analyses_to_a_file/__;!!JYXjzlvb!hOLHnMhmrMM9FiGDneDIoKNWZSgAdlCDbAFaml3Ql0HdLPd4ooC8gHNGqWrubAdfPL4IR6bNULMH9K6525NzkgkZ8XCNNX0EIjI$ 
   #out_info_file = paste(outdir, img_id,run_id,".txt",sep='')
   #sink(out_info_file)
-  pred.class.mlhc  = extract(SC.mlhc$map,evalData)
+  pred.class.mlhc  = raster::extract(SC.mlhc$map,evalData)
   pred.class.mlhc  = get_value((pred.class.mlhc),c(class_list))
-  olof.table.mlhc  = olofsson(as.character(pred.class.mlhc),as.character(evalData$class),n.class.mlhc.arr) # to remove 6th class/here NA
+  olof.table.mlhc  = mapaccuracy::olofsson(as.character(pred.class.mlhc),as.character(evalData$class),n.class.mlhc.arr) # to remove 6th class/here NA
   accuracy.mlhc    = accuracy(pred.class.mlhc,as.character(evalData$class))
   error.mtx.mlhc  = confusionMatrix((as.factor(pred.class.mlhc)),as.factor(evalData$class), mode = "everything", positive="1")
 
-  pred.class.rf = extract(SC.rf$map,evalData)
+  pred.class.rf = raster::extract(SC.rf$map,evalData)
   pred.class.rf = get_value((pred.class.rf),c(class_list))
   olof.table.rf = olofsson(pred.class.rf,as.character(evalData$class),n.class.rf.arr)
   accuracy.rf   = accuracy(pred.class.rf,as.character(evalData$class))
   error.mtx.rf  = confusionMatrix((as.factor(pred.class.rf)),as.factor(evalData$class), mode = "everything", positive="1")
 
-  pred.class.svm = extract(SC.svm$map,evalData)
+  pred.class.svm = raster::extract(SC.svm$map,evalData)
   pred.class.svm = get_value((pred.class.svm),c(class_list))
   olof.table.svm = olofsson(pred.class.svm,as.character(evalData$class),n.class.svm.arr)
   accuracy.svm   = accuracy(pred.class.svm,as.character(evalData$class))
@@ -468,11 +468,11 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   #----------------------------
   # (A). Variable importance plot 
   #----------------------------
-  importance(rf.classifier)
+  raster::importance(rf.classifier)
   if (plot) {
-    png(filename =paste(fig_dir,"varImpRF_",img_id,run_id,".png",sep=""),width = 480, height = 480, 
+    png(filename = file.path(fig_dir,paste("varImpRF_",img_id,run_id,".png",sep="")),width = 480, height = 480, 
         units = "px", pointsize = 12,bg = "white")
-        varImpPlot(rf.classifier)
+        raster::varImpPlot(rf.classifier)
     dev.off()
   }
 
@@ -480,7 +480,7 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   # (B1). Class spectra 
   #----------------------------
   if (plot) {
-    png(filename =paste(fig_dir,"spectra_",img_id,run_id,".png",sep=""),width = 1380, height = 680, 
+    png(filename = file.path(fig_dir,paste("spectra_",img_id,run_id,".png",sep="")),width = 1380, height = 680, 
         units = "px", pointsize = 12,bg = "white")
     par(mfrow = c(1, 2),cex = 2,mar = c(3, 4, 0, 0), oma = c(0.2, 0.2, 0.5, 0.5),tcl = -0.25,mgp = c(2, 0.6, 0))
     ave_spec_arr = matrix(data=NA,nrow=n.class,ncol=n.spec)
@@ -528,7 +528,7 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   # (C). Plotting MASKS images
   #----------------------------
   if (plot) {
-    png(filename =paste(fig_dir,"mask_",img_id,run_id,".png",sep=""),width = 1380, height = 680, 
+    png(filename = file.path(fig_dir,paste("mask_",img_id,run_id,".png",sep="")),width = 1380, height = 680, 
         units = "px", pointsize = 12,bg = "white")
     par(mfrow = c(1, 3),cex = 1,mar = c(1, 2, 4, 4), oma = c(1.8, 0, 1.5, 1.2),tcl = -0.25,mgp = c(2, 0.6, 0))
     plot(index_mask1,main=c("Mask shadow/water"), zlim=c(-1,1))
@@ -544,7 +544,7 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   breakpoints <- c(-0.1,0.9,1.9,2.9,3.9,4.9,5.9,6.9)
   colors <- c("black","yellow","dark green","light green","red","dark gray")
   if (plot) {
-    png(filename =paste(fig_dir,"mlhc_",img_id,run_id,".png",sep=""),width = 1380, height = 680, 
+    png(filename = file.path(fig_dir,paste("mlhc_",img_id,run_id,".png",sep="")),width = 1380, height = 680, 
         units = "px", pointsize = 12,bg = "white")
     par(mfrow = c(1, 2),cex = 1,mar = c(0, 2, 0, 0), oma = c(1.8, 2.5, 1.5, 1.2),tcl = -0.25,mgp = c(2, 0.6, 0))
     #plot RGB
@@ -567,7 +567,7 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   # (E). Plot RF classification
   #----------------------------
   if (plot) {
-    png(filename =paste(fig_dir,"rf_",img_id,run_id,".png",sep=""),width = 1380, height = 680, 
+    png(filename = file.path(fig_dir,paste("rf_",img_id,run_id,".png",sep="")),width = 1380, height = 680, 
       units = "px", pointsize = 12,bg = "white")
     par(mfrow = c(1, 2),cex = 1,mar = c(0, 2, 0, 0), oma = c(1.8, 2.5, 1.5, 1.2),tcl = -0.25,mgp = c(2, 0.6, 0))
     #plot RGB
@@ -582,7 +582,7 @@ for (x in 1:length(run.list)) { # here we input with the Args()
                       labels=c("NoData","GT","RT","HB","BG","SH"),
                       cex.axis=1.6))
     mtext("RandomForest classification",side=3,cex=1)
-    plot(extent(tmp_img),add=T,lwd=2)
+    plot(raster::extent(tmp_img),add=T,lwd=2)
     dev.off()
   }
 
@@ -590,7 +590,7 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   # (F). Plot Vector Support Machine Classification
   #----------------------------
   if (plot) {
-    png(filename =paste(fig_dir,"svm_",img_id,run_id,".png",sep=""),width = 1380, height = 680, 
+    png(filename = file.path(fig_dir,paste("svm_",img_id,run_id,".png",sep="")),width = 1380, height = 680, 
         units = "px", pointsize = 12,bg = "white")
     par(mfrow = c(1, 2),cex = 1,mar = c(0, 2, 0, 0), oma = c(1.8, 2.5, 1.5, 1.2),tcl = -0.25,mgp = c(2, 0.6, 0))
     #plot RGB
@@ -616,11 +616,11 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   #- Saving training data
   save(eval.arr,train.arr,trainData,evalData,cor.train.mtx,fit_msel,index_list_arr, sort.vardat,include2,
        accuracy.mlhc,error.mtx.mlhc,accuracy.rf,error.mtx.rf,accuracy.svm,error.mtx.svm,
-       file=paste(outdir,img_id,run_id,".Rdata",sep=""))
+       file= file.path(outdir, paste(img_id,run_id,".Rdata",sep="")))
   # saving images
-  writeRaster(SC.mlhc$map,paste(outdir,"/class_mlhc_",img_id,run_id,".tif",sep=''),overwrite=TRUE)
-  writeRaster(SC.rf$map,  paste(outdir,"/class_rf_",img_id,run_id,".tif",sep=''),overwrite=TRUE)
-  writeRaster(SC.svm$map, paste(outdir,"/class_svm_",img_id,run_id,".tif",sep=''),overwrite=TRUE)
+  raster::writeRaster(SC.mlhc$map,file.path(outdir, paste("class_mlhc_",img_id,run_id,".tif",sep='')),overwrite=TRUE)
+  raster::writeRaster(SC.rf$map,  file.path(outdir, paste("class_rf_",img_id,run_id,".tif",sep='')),overwrite=TRUE)
+  raster::writeRaster(SC.svm$map, file.path(outdir, paste("class_svm_",img_id,run_id,".tif",sep='')),overwrite=TRUE)
 
   ##################################################################################################
   # Write out text file with results
@@ -630,7 +630,7 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   time.it.took = print(ptm.end-ptm)
 
   #https://urldefense.com/v3/__http://www.cookbook-r.com/Data_input_and_output/Writing_text_and_output_from_analyses_to_a_file/__;!!JYXjzlvb!hOLHnMhmrMM9FiGDneDIoKNWZSgAdlCDbAFaml3Ql0HdLPd4ooC8gHNGqWrubAdfPL4IR6bNULMH9K6525NzkgkZ8XCNNX0EIjI$ 
-  out_info_file = paste(outdir, img_id,run_id,"_test.txt",sep='')
+  out_info_file = file.path(outdir, paste(img_id,run_id,"_test.txt",sep=''))
   sink(out_info_file)
   cat(paste("##################################################################################################\n"))
   cat(paste("###################### Start of code ######################\n"))
@@ -723,9 +723,9 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   colnames(mat) = c(order.txt,"sum","PA")
   mat
   info.mat = paste("error.mtx.mlhc$overall"," Overall Acc:",round(as.numeric(error.mtx.mlhc$overall[1]*100),3),"%")
-  write.table(info.mat, paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = FALSE, sep = ',', col.names = F, row.names = F)
-  write.table(mat, paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = TRUE, sep = ',', col.names = T, row.names = TRUE)
-  write.table(c("-------"), paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = TRUE, sep = ',', col.names = TRUE, row.names = TRUE)
+  write.table(info.mat, file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = FALSE, sep = ',', col.names = F, row.names = F)
+  write.table(mat, file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = TRUE, sep = ',', col.names = T, row.names = TRUE)
+  write.table(c("-------"), file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = TRUE, sep = ',', col.names = TRUE, row.names = TRUE)
   #- - - - - - - - - - - - - - - - - 
   # Ollofson Error matrix -- MLHC (not maj)
   mat = olof.table.mlhc$matrix
@@ -738,9 +738,9 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   colnames(mat) = c(order.txt,"PA")
   mat
   info.mat = paste("olof.table.mlhc$matrix, Overall Acc:",round(olof.table.mlhc$OA*100,3),"%")
-  write.table(info.mat, paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = TRUE, sep = ',', col.names = F, row.names = F)
-  write.table(mat, paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = TRUE, sep = ',', col.names = c(order.txt,"PA"), row.names = TRUE)
-  write.table(c("-------"), paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = TRUE, sep = ',', col.names = TRUE, row.names = TRUE)
+  write.table(info.mat, file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = TRUE, sep = ',', col.names = F, row.names = F)
+  write.table(mat, file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = TRUE, sep = ',', col.names = c(order.txt,"PA"), row.names = TRUE)
+  write.table(c("-------"), file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = TRUE, sep = ',', col.names = TRUE, row.names = TRUE)
   #--------------------------------------------------------------------------------------------
   # Error matrix -- rf (not maj)
   PA = error.mtx.rf$byClass[,3] # Pos Pred Value >> not sure if this is correct?
@@ -755,9 +755,9 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   colnames(mat) = c(order.txt,"sum","PA")
   mat
   info.mat = paste("error.mtx.rf$overall"," Overall Acc:",round(as.numeric(error.mtx.rf$overall[1]*100),3),"%")
-  write.table(info.mat, paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = T, sep = ',', col.names = F, row.names = F)
-  write.table(mat, paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = TRUE, sep = ',', col.names = T, row.names = TRUE)
-  write.table(c("-------"), paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = TRUE, sep = ',', col.names = TRUE, row.names = TRUE)
+  write.table(info.mat, file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = T, sep = ',', col.names = F, row.names = F)
+  write.table(mat, file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = TRUE, sep = ',', col.names = T, row.names = TRUE)
+  write.table(c("-------"), file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = TRUE, sep = ',', col.names = TRUE, row.names = TRUE)
   #- - - - - - - - - - - - - - - - - 
   # Ollofson Error matrix -- rf (not maj)
   mat = olof.table.rf$matrix
@@ -770,9 +770,9 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   colnames(mat) = c(order.txt,"PA")
   mat
   info.mat = paste("olof.table.rf$matrix, Overall Acc:",round(olof.table.rf$OA*100,3),"%")
-  write.table(info.mat, paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = TRUE, sep = ',', col.names = F, row.names = F)
-  write.table(mat, paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = TRUE, sep = ',', col.names = c(order.txt,"PA"), row.names = TRUE)
-  write.table(c("-------"), paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = TRUE, sep = ',', col.names = TRUE, row.names = TRUE)
+  write.table(info.mat, file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = TRUE, sep = ',', col.names = F, row.names = F)
+  write.table(mat, file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = TRUE, sep = ',', col.names = c(order.txt,"PA"), row.names = TRUE)
+  write.table(c("-------"), file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = TRUE, sep = ',', col.names = TRUE, row.names = TRUE)
   #--------------------------------------------------------------------------------------------
   # Error matrix -- svm (not maj)
   PA = error.mtx.svm$byClass[,3] # Pos Pred Value >> not sure if this is correct? 
@@ -787,9 +787,9 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   colnames(mat) = c(order.txt,"sum","PA")
   mat
   info.mat = paste("error.mtx.svm$overall"," Overall Acc:",round(as.numeric(error.mtx.svm$overall[1]*100),3),"%")
-  write.table(info.mat, paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = T, sep = ',', col.names = F, row.names = F)
-  write.table(mat, paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = TRUE, sep = ',', col.names = T, row.names = TRUE)
-  write.table(c("-------"), paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = TRUE, sep = ',', col.names = TRUE, row.names = TRUE)
+  write.table(info.mat, file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = T, sep = ',', col.names = F, row.names = F)
+  write.table(mat, file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = TRUE, sep = ',', col.names = T, row.names = TRUE)
+  write.table(c("-------"), file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = TRUE, sep = ',', col.names = TRUE, row.names = TRUE)
   #- - - - - - - - - - - - - - - - - 
   # Ollofson Error matrix -- svm (not maj)
   mat = olof.table.svm$matrix
@@ -802,13 +802,13 @@ for (x in 1:length(run.list)) { # here we input with the Args()
   colnames(mat) = c(order.txt,"PA")
   mat
   info.mat = paste("olof.table.svm$matrix, Overall Acc:",round(olof.table.svm$OA*100,3),"%")
-  write.table(info.mat, paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = TRUE, sep = ',', col.names = F, row.names = F)
-  write.table(mat, paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = TRUE, sep = ',', col.names = c(order.txt,"PA"), row.names = TRUE)
-  write.table(c("-------"), paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = TRUE, sep = ',', col.names = TRUE, row.names = TRUE)
+  write.table(info.mat, file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = TRUE, sep = ',', col.names = F, row.names = F)
+  write.table(mat, file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = TRUE, sep = ',', col.names = c(order.txt,"PA"), row.names = TRUE)
+  write.table(c("-------"), file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = TRUE, sep = ',', col.names = TRUE, row.names = TRUE)
   #--wRITE VARIABLE SELECTION----------------------
-  write.table(paste("vARIABLE SELECTION (mir):",varsel.treshold,"Tresholds"), paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = TRUE, sep = ',', col.names = TRUE, row.names = TRUE)
-  write.table(print(sort(vardat,decreasing = T)), paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = TRUE, sep = ',', col.names = TRUE, row.names = TRUE)
-  write.table(c("-------"), paste(outdir,img_id,"_cfm",run_id,".csv",sep=''), append = TRUE, sep = ',', col.names = TRUE, row.names = TRUE)
+  write.table(paste("vARIABLE SELECTION (mir):",varsel.treshold,"Tresholds"), file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = TRUE, sep = ',', col.names = TRUE, row.names = TRUE)
+  write.table(print(sort(vardat,decreasing = T)), file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = TRUE, sep = ',', col.names = TRUE, row.names = TRUE)
+  write.table(c("-------"), file.path(outdir, paste(img_id,"_cfm",run_id,".csv",sep='')), append = TRUE, sep = ',', col.names = TRUE, row.names = TRUE)
 
   #--------------------------------------------------------------------------------------------
   # Write out metrics to CSV
@@ -821,7 +821,7 @@ for (x in 1:length(run.list)) { # here we input with the Args()
                     as.numeric(error.mtx.rf$overall[1]),olof.table.rf$OA,
                     as.numeric(error.mtx.svm$overall[1]),olof.table.svm$OA,
                     as.numeric(c(n.class.mlhc.arr[],n.class.rf.arr[],n.class.svm.arr[])))
-  write.table(rbind(header,OA_metrics), paste(outdir,img_id,"_metrics",run_id,".csv",sep=''), append = FALSE, sep = ',', col.names = F, row.names = F)
+  write.table(rbind(header,OA_metrics), file.path(outdir, paste(img_id,"_metrics",run_id,".csv",sep='')), append = FALSE, sep = ',', col.names = F, row.names = F)
 
   message(paste("End running.......",img_id,"...Number:",imgno))
 } # End for IMG LOOP
