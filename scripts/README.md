@@ -5,6 +5,7 @@ This sub-directory contains the relevant scripts for mapping biotic disturbances
 ### Sub-directory information:
 * The `DATA` and `EXPORTS` sub-directories contain relevant files that are `INPUT` and `OUTPUT` for the scripts in this folder.
 * The `calc_wv_index.r` is a function required for the `SmallSat_class_insect_disturb_23121.R` main script. The `calc_wv_index.r` function takes multiband imagery as `input`, calculates indices, and exports a multiband raster as `output`.
+* The `SmallSat_class_insect_disturb_23121.R` is the main script for this project and uses the workflow shown in the figure below.
 
 ### Image classification workflow:
 
