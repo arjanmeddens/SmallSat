@@ -6,6 +6,7 @@
 #-------------------------------------------------------------------#
 # Updated to include 4 band 2021 NAIP images -- 19 May 2022
 # Updated to include 5 band MX RedEdge Sensor (UAS) -- 06 Jan 2023
+# Updated to add `roxygen` skeleton to function -- 19 Aug 2024
 #-------------------------------------------------------------------#
 
 calc_wv_index = function(input_img,num_bands=num_bands) {
