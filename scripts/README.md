@@ -8,8 +8,8 @@ This sub-directory contains the relevant scripts for mapping biotic disturbances
 * The `SmallSat_class_insect_disturb_23121.R` is the main script for this project and uses the workflow shown in the figure below.
 
 ### Image classification workflow:
+<img src="../docs/ProjectWorkflow.png" alt="Image classification workflow" style="width:100%; height:100%;" />
 
-![Image classification workflow](../docs/ProjectWorkflow.png)  
 *The workflow used for classifying high-resolution imagery that contain tree mortality from biotic disturbances; <sup>1</sup>Insect and Disease Survey data (USDA Forest Service 2023), <sup>2</sup>Affected gray trees were only included if they were present in the imagery, <sup>3</sup>maximum likelihood classification, <sup>4</sup>randomForest, <sup>5</sup>support vector machine.*
 
 #### Example result:
