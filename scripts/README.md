@@ -16,5 +16,5 @@ This sub-directory contains the relevant scripts for mapping biotic disturbances
    *Illustration of (a) WorldView-2 image zoom with a spruce beetle outbreak attacking Engelmann spruce trees in south central Colorado and (b) random forest classification results*
 
 4. The `calc_wv_index.r` function is a standalone function used in the image classification workflow. The function takes multiband imagery as `input`, calculates indices, and exports a multiband raster as `output`.
-    * Function documentation:
+    * #### Function documentation:
    <p><img src="../docs/calcWVIndexFuncDoc.png" alt="calc_wv_index function documentation" style="width:100%; height:100%;" /></p>
