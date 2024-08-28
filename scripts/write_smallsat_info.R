@@ -1,0 +1,88 @@
+#--------------------------------------------------------------------------------------------
+# Write out run parameters and summary of results to .txt
+#--------------------------------------------------------------------------------------------
+write_smallsat_info = function(out.file) {
+#' Run parameters and summary of results to .txt
+#'
+#' @param out.file `string`; name and location (path) of the output file
+#'
+#' @return `.txt` file file exported to the `out.file` location 
+#' @export
+#'
+#' @examples
+  #----- Start -----#
+  sink(out.file)
+  cat(paste("##################################################################################################\n"))
+  cat(paste("###################### Start of code ######################\n"))
+  cat(paste("##################################################################################################\n"))
+  cat(paste("-> Image ID:",img_id,"\n"))
+  cat(paste("Start time:",ptm,"\n"))
+  cat(paste("End time:  ",ptm.end,"\n"))
+  cat(paste("Run time:  ",time.it.took[],"\n"))
+  cat(paste("#--------------------------------------#"),"\n")
+  cat(paste("-> Run ID:                   ",run_id),"\n")
+  cat(paste("-> Shapefile ID (eval):      ",shp_id),"\n")
+  cat(paste("-> Seed:                     ",seed),"\n")
+  cat(paste("-> Fig dir:                  ",exportsPATH),"\n")
+  cat(paste("-> Out dir:                  ",exportsPATH),"\n")
+  cat(paste("##################################################################################################\n"))
+  cat(paste("########## Parameters ##########"),"\n")
+  cat(paste("-> Cloud theshold (data<Band2):         ",cld_trhd),"\n")
+  cat(paste("-> Cloud shadow theshold (data>Band3):  ",cld_shadow_trhd),"\n")
+  cat(paste("-> Number of indices:                   ",no.bands.class),"\n")
+  cat(paste("########## Image info ##########"),"\n")
+  cat(paste("Extent: ",ext_shp),"\n")
+  print("All Image / NA / Mask / Data")
+  print(p.area)
+  print(paste("Total Area (Km2):",area.img))
+  print(paste("Total NA   (Km2):",area.na))
+  print(paste("Total Mask (Km2):",area.mask))
+  print(paste("Total Data (Km2):",area.data))
+  cat(paste("##################################################################################################\n"))
+  cat(paste("########## (1) Initial RF results ##########"),"\n")
+  cat(print(rf.classifier))
+  #get_value(pred.rf.maj$layer,class_list)
+  print(class_txt_arr)
+  cat(print(accuracy(eval.arr[,n.bands+1],pred.arr)),"\n")
+  print("---correlation matrix train arr---")
+  print(cor.train.mtx)
+  print("---Variable selection----")
+  print(fit_msel)
+  print(paste(index_list_arr))
+  cat(paste("##################################################################################################\n"))
+  print("########## (2) MLHC results ##########")
+  print("class percentages")
+  print(p.class.mlhc)
+  print("Mask(0) # Bare Ground (1) # Green Trees (2) # Herbaceous (3) # Red trees (4) # Shadow (5) # Gray trees (6)  # EXtra class (7) # No data (8)")
+  print("-------Confusion Matrices--------")
+  print(accuracy.mlhc)
+  print(error.mtx.mlhc)
+  print("----Olof cfm----")
+  print(olof.table.mlhc)
+  cat(paste("##################################################################################################\n"))
+  print("########## (3) RandomForest results ##########")
+  print("class percentages")
+  print(p.class.rf)
+  print("Mask(0) # Bare Ground (1) # Green Trees (2) # Herbaceous (3) # Red trees (4) # Shadow (5) # Gray trees (6)  # EXtra class (7) # No data (8)")
+  print("-------Confusion Matrices--------")
+  print(accuracy.rf)
+  print(error.mtx.rf)
+  print("----Olof cfm----")
+  print(olof.table.rf)
+  cat(paste("##################################################################################################\n"))
+  print("########## (4) SVM results ##########")
+  print("class percentages")
+  print(p.class.svm)
+  print("Mask(0) # Bare Ground (1) # Green Trees (2) # Herbaceous (3) # Red trees (4) # Shadow (5) # Gray trees (6)  # EXtra class (7) # No data (8)")
+  print("-------Confusion Matrices--------")
+  print(accuracy.svm)
+  print(error.mtx.svm)
+  print("----Olof cfm----")
+  print(olof.table.svm)
+  cat(paste("##################################################################################################\n"))
+  cat(paste("###################### End of code ######################"),"\n")
+  cat(paste("##################################################################################################\n"))
+  #sink()
+  closeAllConnections()   # Close Sink file
+  
+}
