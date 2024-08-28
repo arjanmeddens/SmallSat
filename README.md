@@ -5,7 +5,7 @@ This GitHub repository contains necessary code and materials for the [NASA CSDA]
 
 > [!NOTE]
 > * Funding: NASA SmallSat grant: 80NSSC21K1155
-> * NASA’s Commercial Archive Data for NASA investigators (http://cad4nasa.gsfc. nasa.gov) provided very high resolution Maxar satellite data under the National Geospatial-Intelligence Agency’s (NGA) NextView license agreement.
+> * NASA’s Commercial Archive Data for NASA investigators (http://cad4nasa.gsfc.nasa.gov) provided very high resolution Maxar satellite data under the National Geospatial-Intelligence Agency’s (NGA) NextView license agreement.
 > * Please refer to the manuscript for details about the project [URL FOR MANUSCRIPT]
 
 <hr>
