@@ -1,9 +1,12 @@
 # Mapping biotic disturbances using very high-resolution satellite imagery: Code repository
 
-* This GitHub repository contains necessary code and materials for the [NASA CSDA](https://www.earthdata.nasa.gov/esds/csda) project titled:
- <p><b><i>Developing a Rapid Classification Approach for Using High-Resolution Satellite Imagery to Map Insect-Caused Forest Disturbances.</i></b></p>
+This GitHub repository contains necessary code and materials for the [NASA CSDA](https://www.earthdata.nasa.gov/esds/csda) project titled:
+### *"Developing a Rapid Classification Approach for Using High-Resolution Satellite Imagery to Map Insect-Caused Forest Disturbances."*
 
-* Please refer to the manuscript for details about the project [URL FOR MANUSCRIPT]  
+> [!NOTE]
+> * Funding: NASA SmallSat grant: 80NSSC21K1155
+> * NASA’s Commercial Archive Data for NASA investigators (http://cad4nasa.gsfc. nasa.gov) provided very high resolution Maxar satellite data under the National Geospatial-Intelligence Agency’s (NGA) NextView license agreement.
+> * Please refer to the manuscript for details about the project [URL FOR MANUSCRIPT]
 
 <hr>
 
