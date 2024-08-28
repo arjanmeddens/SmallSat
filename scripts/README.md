@@ -21,6 +21,7 @@ This sub-directory contains the relevant scripts for mapping biotic disturbances
    *Illustration of (a) WorldView-2 image zoom with a spruce beetle outbreak attacking Engelmann spruce trees in south central Colorado and (b) random forest classification results*
 
 4. Functions present in this directory:
+    * The functions are documented using a standardized ["roxygen skeleton"](https://r-pkgs.org/man.html#sec-man-workflow) from the [`roxygen2`](https://cran.r-project.org/web/packages/roxygen2/index.html) R package.
     * `calc_vhr_index.r` function is used in the image classification workflow. The function takes multiband imagery as `input`, calculates indices, and exports a multiband raster as `output` for data of type `RasterStack`. This function can also be used as a standalone function. Function documentation:
    <p><img src="../docs/calcWVIndexFuncDoc.png" alt="calc_wv_index function documentation" style="width:100%; height:100%;" /></p>
 
