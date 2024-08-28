@@ -5,9 +5,9 @@ This sub-directory contains the relevant scripts for mapping biotic disturbances
 ### Directory information:
 1. [DATA](DATA) sub-directory contains the relevant files that are `INPUT` and `OUTPUT` for the classificaion pipeline. The [DATA](DATA) subdirectory consists of a "README" file that outlines the sub-folders and their contents.
 2. The `RCode_SmallSat_class_insect_disturb_Meddens_etal_240826.R` is the <u>main script</u> for this project. 
-    * _**NOTE:**_ the paths intialized in script are all relative, i.e., successful run of the script requires users to reflect the folder structure of this directory. If the entire repository is not cloned and absolute paths are used, please set the working directory with `setwd()`. 
+    * _**NOTE:**_ the paths intialized in script are all relative, i.e., successful run of the script requires users to reflect the folder structure of this directory. If the entire repository is not cloned and absolute paths are used, please set the working directory with `setwd()` -- this would still require the user to reflect their folder structure to the structure of this repository in order to successfully run the script. 
     * The `INPUT` and `OUTPUT` are in the [DATA](DATA) subdirectory. 
-    * The run parameters are passed via a .csv file that is read by the main script. The .csv file is stored in the "shapefiles" sub-folder in the [DATA](DATA) subdirectory.
+    * The run parameters are passed via a .csv file that is read by the [main script](https://github.com/arjanmeddens/SmallSat/blob/main/scripts/RCode_SmallSat_class_insect_disturb_Meddens_etal_240826.R#L46). The .csv file is stored in the "shapefiles" sub-folder in the [DATA](DATA) subdirectory.
     * The script uses the workflow shown in the figure below:
     
     #### Image classification workflow: 
